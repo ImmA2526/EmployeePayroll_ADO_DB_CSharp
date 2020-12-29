@@ -7,6 +7,8 @@ namespace EmployeePayrol_DB
         static void Main(string[] args)
         {
             Console.WriteLine("************Welcome To EmployeeDataBase************");
+            EmployeeRepo Repo = new EmployeeRepo();
+            Repo.CheckDBConnection();
         }
     }
 }

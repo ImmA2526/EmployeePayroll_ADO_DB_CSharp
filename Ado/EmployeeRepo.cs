@@ -128,5 +128,37 @@ namespace EmployeePayrol_DB
                 this.Connection.Close();
             }
         }
+        /// <summary>
+        /// Update Salary
+        /// </summary>
+        /// <returns></returns>
+        public Decimal UpdateSalary()
+        {
+            try
+            {
+                EmployeeModel employeeModel = new EmployeeModel();
+                using (this.Connection)
+                {
+                    string query = @"update EmployeePayroll set basic_pay=3000000 where name='bob';";
+                    SqlCommand cmd = new SqlCommand(query, this.Connection);
+                    this.Connection.Open();
+                    var result = cmd.ExecuteNonQuery();
+                    if (result == 1)
+                    {
+                        query = @"Select basic_pay from EmployeePayroll where name='bob';";
+                        cmd = new SqlCommand(query, Connection);
+                        object res = cmd.ExecuteScalar();
+                        employeeModel.basic_pay = (decimal)res;
+                        return (employeeModel.basic_pay);
+                    }
+                    else
+                        return 0;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

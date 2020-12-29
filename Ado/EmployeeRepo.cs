@@ -33,7 +33,7 @@ namespace EmployeePayrol_DB
         }
 
         /// <summary>
-        /// UC 2 Retrive  all employee.
+        /// UC 2 UC 4 Retrive  all employee.
         /// </summary>
         /// <exception cref="Exception"></exception>
         public void GetAllEmployee()

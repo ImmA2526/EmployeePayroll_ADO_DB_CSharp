@@ -128,36 +128,81 @@ namespace EmployeePayrol_DB
                 this.Connection.Close();
             }
         }
+
         /// <summary>
-        /// Update Salary
+        /// UC 5 View Particuar Employee
         /// </summary>
-        /// <returns></returns>
-        public Decimal UpdateSalary()
+        public void GetPerticularEmployeeData()
         {
             try
             {
-                EmployeeModel employeeModel = new EmployeeModel();
+                EmployeeModel Model = new EmployeeModel();
                 using (this.Connection)
                 {
-                    string query = @"update EmployeePayroll set basic_pay=3000000 where name='bob';";
-                    SqlCommand cmd = new SqlCommand(query, this.Connection);
+                    //Get Basic Pay for Perticular Employee
+                    string viewQuery = @"SELECT basic_pay  from EmployeePayroll WHERE name = 'Abhilasha'; ";
+                    SqlCommand CMD = new SqlCommand(viewQuery, this.Connection);
                     this.Connection.Open();
-                    var result = cmd.ExecuteNonQuery();
-                    if (result == 1)
+                    SqlDataReader reader1 = CMD.ExecuteReader();
+                    if (reader1.HasRows)
                     {
-                        query = @"Select basic_pay from EmployeePayroll where name='bob';";
-                        cmd = new SqlCommand(query, Connection);
-                        object res = cmd.ExecuteScalar();
-                        employeeModel.basic_pay = (decimal)res;
-                        return (employeeModel.basic_pay);
+                        while (reader1.Read())
+                        {
+                            Model.basic_pay = reader1.GetDecimal(0);
+                        }
+                        Console.WriteLine("Basic Pay for Abhilasha is : {0}", Model.basic_pay);
                     }
                     else
-                        return 0;
+                    {
+                        Console.WriteLine("No Data Found");
+                    }
+                    reader1.Close();
+                    this.Connection.Close();
+
+
+                    //Get List of Employee who Joined between perticular range of date
+                    string ViewQuery = @"SELECT * FROM EmployeePayroll WHERE start_Date BETWEEN CAST('2010-05-02' as date) AND GETDATE(); ";
+                    SqlCommand CMD2 = new SqlCommand(ViewQuery, this.Connection);
+                    this.Connection.Open();
+                    SqlDataReader reader = CMD2.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        Console.WriteLine("Following is list of Employee who joined between Date: 2017-01-30 And 2020-12-29");
+                        Console.WriteLine("\n");
+                        while (reader.Read())
+                        { 
+                        Model.Id = reader.GetInt32(0);
+                        Model.name = reader.GetString(1);
+                        Model.basic_pay = reader.GetDecimal(2);
+                        Model.start_Date = reader.GetDateTime(3);
+                        Model.gender = Convert.ToChar(reader.GetString(4));
+                        Model.phoneNumber = reader.GetString(5);
+                        Model.department = reader.GetString(6);
+                        Model.address = reader.GetString(7);
+                        Model.deduction = reader.GetDouble(8);
+                        Model.taxable = reader.GetSqlSingle(9);
+                        Model.netpay = reader.GetSqlSingle(10);
+                        Model.income_tax = reader.GetDouble(11);
+                        Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}", Model.Id, Model.name, Model.basic_pay, Model.start_Date, Model.gender, Model.phoneNumber, Model.department, Model.address, Model.deduction, Model.taxable, Model.netpay, Model.income_tax);
+                    }
+                    Console.WriteLine("\n");
+                        
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Data Found");
+                    }
+                    reader.Close();
+                    this.Connection.Close();
                 }
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.Connection.Close();
             }
         }
     }

@@ -158,8 +158,6 @@ namespace EmployeePayrol_DB
                     }
                     reader1.Close();
                     this.Connection.Close();
-
-
                     //Get List of Employee who Joined between perticular range of date
                     string ViewQuery = @"SELECT * FROM EmployeePayroll WHERE start_Date BETWEEN CAST('2010-05-02' as date) AND GETDATE(); ";
                     SqlCommand CMD2 = new SqlCommand(ViewQuery, this.Connection);

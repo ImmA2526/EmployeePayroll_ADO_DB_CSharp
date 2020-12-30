@@ -168,23 +168,22 @@ namespace EmployeePayrol_DB
                         Console.WriteLine("Following is list of Employee who joined between Date: 2017-01-30 And 2020-12-29");
                         Console.WriteLine("\n");
                         while (reader.Read())
-                        { 
-                        Model.Id = reader.GetInt32(0);
-                        Model.name = reader.GetString(1);
-                        Model.basic_pay = reader.GetDecimal(2);
-                        Model.start_Date = reader.GetDateTime(3);
-                        Model.gender = Convert.ToChar(reader.GetString(4));
-                        Model.phoneNumber = reader.GetString(5);
-                        Model.department = reader.GetString(6);
-                        Model.address = reader.GetString(7);
-                        Model.deduction = reader.GetDouble(8);
-                        Model.taxable = reader.GetSqlSingle(9);
-                        Model.netpay = reader.GetSqlSingle(10);
-                        Model.income_tax = reader.GetDouble(11);
-                        Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}", Model.Id, Model.name, Model.basic_pay, Model.start_Date, Model.gender, Model.phoneNumber, Model.department, Model.address, Model.deduction, Model.taxable, Model.netpay, Model.income_tax);
-                    }
-                    Console.WriteLine("\n");
-                        
+                        {
+                            Model.Id = reader.GetInt32(0);
+                            Model.name = reader.GetString(1);
+                            Model.basic_pay = reader.GetDecimal(2);
+                            Model.start_Date = reader.GetDateTime(3);
+                            Model.gender = Convert.ToChar(reader.GetString(4));
+                            Model.phoneNumber = reader.GetString(5);
+                            Model.department = reader.GetString(6);
+                            Model.address = reader.GetString(7);
+                            Model.deduction = reader.GetDouble(8);
+                            Model.taxable = reader.GetSqlSingle(9);
+                            Model.netpay = reader.GetSqlSingle(10);
+                            Model.income_tax = reader.GetDouble(11);
+                            Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}", Model.Id, Model.name, Model.basic_pay, Model.start_Date, Model.gender, Model.phoneNumber, Model.department, Model.address, Model.deduction, Model.taxable, Model.netpay, Model.income_tax);
+                        }
+                        Console.WriteLine("\n");
                     }
                     else
                     {
@@ -192,6 +191,98 @@ namespace EmployeePayrol_DB
                     }
                     reader.Close();
                     this.Connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.Connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// UC 6 PErform Aggregate Function
+        /// </summary>
+        public void AggregateOperations()
+        {
+            try
+            {
+                EmployeeModel Model = new EmployeeModel();
+                using (this.Connection)
+                {
+                    using (SqlCommand CMD = new SqlCommand
+                        (
+                        @"SELECT SUM(basic_pay) FROM EmployeePayroll WHERE gender = 'F' GROUP BY gender;
+                        SELECT MIN(basic_pay) FROM EmployeePayroll WHERE gender = 'F' GROUP BY gender;
+                        SELECT MAX(basic_pay) FROM EmployeePayroll WHERE gender = 'F' GROUP BY gender;
+                        SELECT COUNT(id) FROM EmployeePayroll WHERE gender = 'F';
+                        SELECT SUM(basic_pay) FROM EmployeePayroll WHERE gender = 'M' GROUP BY gender;
+                        SELECT AVG(basic_pay) FROM EmployeePayroll WHERE gender = 'M' GROUP BY gender; 
+                        SELECT COUNT(id) FROM EmployeePayroll WHERE gender = 'M';", Connection))
+                    {
+                        Connection.Open();
+                        using (SqlDataReader reader = CMD.ExecuteReader())
+                        {
+                            Console.WriteLine("\n*****************Aggregate Function Operation on Female Employee*****************");
+                            while (reader.Read())
+                            {
+                                Model.basic_pay = reader.GetDecimal(0);
+                                Console.WriteLine("Overall Sum of Basic Pay of Female Employee is : {0}", Model.basic_pay);
+                            }
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    Model.basic_pay = reader.GetDecimal(0);
+                                    Console.WriteLine("Minimum of Basic Pay of Female Employee is : {0}", Model.basic_pay);
+                                }
+                            }
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    Model.basic_pay = reader.GetDecimal(0);
+                                    Console.WriteLine("Maximum of Basic Pay of Female Employee is : {0}", Model.basic_pay);
+                                }
+                            }
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    Model.Id = reader.GetInt32(0);
+                                    Console.WriteLine("Number of Male Employee present : {0}", Model.Id);
+                                }
+                            }
+                            Console.WriteLine("\n*****************Aggregate Function Operation on Male Employee*****************");
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    Model.basic_pay =reader.GetDecimal(0);
+                                    Console.WriteLine("Overall Sum of Basic Pay of Male Employee is : {0}", Model.basic_pay);
+                                }
+                            }
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    Model.basic_pay = reader.GetDecimal(0);
+                                    Console.WriteLine("Average of Basic Pay of Male Employee is : {0}", Model.basic_pay);
+                                }
+                            }
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    Model.Id = reader.GetInt32(0);
+                                    Console.WriteLine("Number of Male Employee present : {0}", Model.Id);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception e)
